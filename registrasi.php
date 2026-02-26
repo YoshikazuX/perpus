@@ -18,7 +18,7 @@
     <h2>Daftar Akun</h2>
     <p>Buat akun baru untuk mengakses Perpustakaan</p>
 
-    <form action="Dashboard.php" method="post">
+    <form action="login.php" method="post">
       <input type="text" placeholder="Nama Lengkap" required>
       <input type="email" placeholder="Email" required>
       <input type="text" placeholder="Username" required>
