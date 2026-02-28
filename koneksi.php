@@ -1,4 +1,4 @@
 <?php
-$koneksi = mysqli_connect("localhost","root","", "perpus_dewi");
+$koneksi = mysqli_connect("localhost","root","root", "perpus_dewi");
 
 ?>

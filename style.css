@@ -394,5 +394,115 @@ tr:hover {
   text-decoration: underline;
 }
 
+/* ========== Form Page (Edit / Tambah) ========== */
+.form-container {
+  max-width: 580px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 35px 40px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
 
+.form-header {
+  margin-bottom: 28px;
+  text-align: center;
+}
 
+.form-header h2 {
+  color: #1e3a8a;
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.form-header p {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e3a8a;
+  margin-bottom: 6px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 11px 15px;
+  border: 1.5px solid #c7d9ff;
+  border-radius: 10px;
+  background-color: #f8fbff;
+  font-size: 14px;
+  font-family: "Poppins", sans-serif;
+  color: #333;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #93c5fd;
+  box-shadow: 0 0 8px rgba(147, 197, 253, 0.45);
+  background-color: #ffffff;
+}
+
+.form-group input:disabled {
+  background-color: #e8eef8;
+  color: #6b7280;
+  cursor: not-allowed;
+  border-color: #d0daf0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.btn-submit {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  padding: 11px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+.btn-cancel {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+  padding: 11px 28px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #e2e8f0;
+  color: #334155;
+  transform: translateY(-1px);
+}

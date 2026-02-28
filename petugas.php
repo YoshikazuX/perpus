@@ -36,7 +36,7 @@
             <h2>Daftar Petugas</h2>
             <table border="0" cellspacing="0" cellpadding="8">
                 <tr>
-                    <th>ID_PETUGAS</th>
+                    <th>ID PETUGAS</th>
                     <th>NAMA</th>
                     <th>GENDER</th>
                     <th>ALAMAT</th>
