@@ -1,12 +1,20 @@
 <?php
+session_start();
 include 'koneksi.php';
+
+if (!isset($_SESSION['ID_USER'])) {
+    header("Location: login.php");
+    exit;
+}
+
 $ISBN = $_POST['ISBN'];
 $JUDUL = $_POST['JUDUL_BUKU'];
 $PENGARANG = $_POST['PENGARANG'];
 $PENERBIT = $_POST['PENERBIT'];
 $TAHUN_TERBIT = $_POST['TAHUN_TERBIT'];
+$STOK = max(0, (int) $_POST['STOK']);
 
-mysqli_query($koneksi, "INSERT INTO buku VALUES ('$ISBN','$JUDUL','$PENGARANG','$PENERBIT','$TAHUN_TERBIT')");
+mysqli_query($koneksi, "INSERT INTO buku VALUES ('$ISBN','$JUDUL','$PENGARANG','$PENERBIT','$TAHUN_TERBIT','$STOK')");
 header("location:buku.php?pesan=input");
 
 ?>

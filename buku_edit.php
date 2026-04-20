@@ -82,6 +82,11 @@ $tampil = mysqli_fetch_array($data);
             <input type="text" id="tahun" name="TAHUN_TERBIT" value="<?php echo $tampil['TAHUN_TERBIT']; ?>" required>
           </div>
 
+          <div class="form-group">
+            <label for="stok">Stok</label>
+            <input type="number" id="stok" name="STOK" min="0" value="<?php echo $tampil['STOK']; ?>" required>
+          </div>
+
           <div class="form-actions">
             <a href="buku.php" class="btn-cancel">Batal</a>
             <button type="submit" class="btn-submit">Simpan Perubahan</button>

@@ -7,14 +7,14 @@ if (!isset($_SESSION['ID_USER'])) {
     exit;
 }
 
-$idPetugas = mysqli_real_escape_string($koneksi, trim($_POST['ID_PETUGAS']));
+$idPeminjam = mysqli_real_escape_string($koneksi, trim($_POST['ID_PEMINJAM']));
 $nama = mysqli_real_escape_string($koneksi, trim($_POST['NAMA']));
-$gender = mysqli_real_escape_string($koneksi, trim($_POST['GENDER']));
 $alamat = mysqli_real_escape_string($koneksi, trim($_POST['ALAMAT']));
+$gender = mysqli_real_escape_string($koneksi, trim($_POST['GENDER']));
 $hp = mysqli_real_escape_string($koneksi, trim($_POST['HP']));
 
-mysqli_query($koneksi, "INSERT INTO petugas VALUES ('$idPetugas', '$nama', '$gender', '$alamat', '$hp')");
+mysqli_query($koneksi, "INSERT INTO peminjam VALUES ('$idPeminjam', '$nama', '$alamat', '$gender', '$hp')");
 
-header("Location: petugas.php?pesan=input");
+header("Location: peminjam.php?pesan=input");
 exit;
 ?>

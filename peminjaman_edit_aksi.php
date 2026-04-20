@@ -22,34 +22,51 @@ if ($jumlah < 1) {
 }
 
 if ($tglSelesai !== '' && $tglSelesai < $tglMulai) {
-    echo "<script>alert('Tanggal kembali tidak boleh lebih awal dari tanggal peminjaman.'); window.location='form_peminjaman.php';</script>";
+    echo "<script>alert('Tanggal kembali tidak boleh lebih awal dari tanggal peminjaman.'); window.location='peminjaman_edit.php?ID_PEMINJAMAN=" . urlencode($idPeminjaman) . "';</script>";
     exit;
 }
 
 $tglSelesaiValue = $tglSelesai === '' ? "NULL" : "'" . mysqli_real_escape_string($koneksi, $tglSelesai) . "'";
 
+$peminjamanLama = mysqli_query($koneksi, "SELECT * FROM peminjaman WHERE ID_PEMINJAMAN='$idPeminjaman' LIMIT 1");
+$dataLama = $peminjamanLama ? mysqli_fetch_assoc($peminjamanLama) : null;
+
+if (!$dataLama) {
+    header("Location: peminjaman.php");
+    exit;
+}
+
 mysqli_begin_transaction($koneksi);
 
 try {
+    if ($dataLama['STATUS'] === 'Dipinjam' && !tambahStokBuku($koneksi, $dataLama['ISBN'], (int) $dataLama['JUMLAH'], $pesanStok)) {
+        throw new Exception($pesanStok);
+    }
+
     if ($status === 'Dipinjam' && !kurangiStokBuku($koneksi, $isbn, $jumlah, $pesanStok)) {
         throw new Exception($pesanStok);
     }
 
-    $query = "INSERT INTO peminjaman
-    (ID_PEMINJAMAN, ISBN, ID_PEMINJAM, ID_PETUGAS, JUMLAH, TANGGAL_MULAI, TANGGAL_SELESAI, STATUS)
-    VALUES
-    ('$idPeminjaman', '$isbn', '$idPeminjam', '$idPetugas', '$jumlah', '$tglMulai', $tglSelesaiValue, '$status')";
+    $query = "UPDATE peminjaman SET
+    ISBN='$isbn',
+    ID_PEMINJAM='$idPeminjam',
+    ID_PETUGAS='$idPetugas',
+    JUMLAH='$jumlah',
+    TANGGAL_MULAI='$tglMulai',
+    TANGGAL_SELESAI=$tglSelesaiValue,
+    STATUS='$status'
+    WHERE ID_PEMINJAMAN='$idPeminjaman'";
 
     if (!mysqli_query($koneksi, $query)) {
         throw new Exception(mysqli_error($koneksi));
     }
 
     mysqli_commit($koneksi);
-    header("Location: peminjaman.php");
+    header("Location: peminjaman.php?pesan=update");
     exit;
 } catch (Throwable $e) {
     mysqli_rollback($koneksi);
-    echo "<script>alert('" . addslashes($e->getMessage()) . "'); window.location='form_peminjaman.php';</script>";
+    echo "<script>alert('" . addslashes($e->getMessage()) . "'); window.location='peminjaman_edit.php?ID_PEMINJAMAN=" . urlencode($idPeminjaman) . "';</script>";
     exit;
 }
 ?>

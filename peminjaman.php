@@ -1,5 +1,15 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['ID_USER'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +26,7 @@
       <li><a href="Buku.php">Buku</a></li>
       <li><a href="Peminjam.php">Peminjam</a></li>
       <li><a href="Petugas.php">Petugas</a></li>
-      <li><a href="Peminjaman.php">Peminjaman</a></li>
+      <li><a href="Peminjaman.php" class="active">Peminjaman</a></li>
       <li><a href="Login.php">Logout</a></li>
     </ul>
   </div>
@@ -32,6 +42,9 @@
 
     <div class="content">
       <h2>Daftar Peminjaman</h2>
+      <div class="tombol-tambah">
+        <a href="form_peminjaman.php" class="btn-tambah">+ Tambah Data</a>
+      </div>
       <table border="0" cellspacing="0" cellpadding="8">
         <tr>
           <th>ID PEMINJAMAN</th>
@@ -39,7 +52,10 @@
           <th>NAMA PEMINJAM</th>
           <th>ID PETUGAS</th>
           <th>TANGGAL MULAI</th>
+          <th>TANGGAL SELESAI</th>
           <th>STATUS</th>
+          <th>OPSI</th>
+          <th>AKSI</th>
         </tr>
 
         <?php
@@ -58,12 +74,28 @@
         while ($tampil = mysqli_fetch_array($data)) {
         ?>
           <tr>
-            <td><?php echo $tampil['ID_PEMINJAMAN']; ?></td>
-            <td><?php echo $tampil['JUDUL_BUKU']; ?></td>
-            <td><?php echo $tampil['NAMA_PEMINJAM']; ?></td>
-            <td><?php echo $tampil['ID_PETUGAS']; ?></td>
-            <td><?php echo $tampil['TANGGAL_MULAI']; ?></td>
-            <td><?php echo $tampil['STATUS']; ?></td>
+            <td><?php echo htmlspecialchars($tampil['ID_PEMINJAMAN'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($tampil['JUDUL_BUKU'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($tampil['NAMA_PEMINJAM'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($tampil['ID_PETUGAS'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($tampil['TANGGAL_MULAI'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo $tampil['TANGGAL_SELESAI'] ? htmlspecialchars($tampil['TANGGAL_SELESAI'], ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+            <td><?php echo htmlspecialchars($tampil['STATUS'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td class="option-cell">
+              <div class="action-buttons">
+                <a href="peminjaman_edit.php?ID_PEMINJAMAN=<?= urlencode($tampil['ID_PEMINJAMAN']); ?>" class="btn-action edit">Edit</a>
+                <a href="peminjaman_hapus.php?ID_PEMINJAMAN=<?= urlencode($tampil['ID_PEMINJAMAN']); ?>" class="btn-action delete">Hapus</a>
+              </div>
+            </td>
+            <td class="action-cell">
+              <div class="option-buttons">
+                <?php if ($tampil['STATUS'] === 'Dipinjam') { ?>
+                  <a href="peminjaman_kembalikan.php?ID_PEMINJAMAN=<?= urlencode($tampil['ID_PEMINJAMAN']); ?>" class="btn-action return">Kembalikan</a>
+                <?php } else { ?>
+                  <span class="option-placeholder">-</span>
+                <?php } ?>
+              </div>
+            </td>
           </tr>
         <?php
         }
@@ -72,4 +104,5 @@
     </div>
   </div>
 </body>
+
 </html>

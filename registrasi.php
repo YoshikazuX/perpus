@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <title>Registrasi</title>
-
 </head>
 
 <body class="register-body">
@@ -18,17 +17,23 @@
     <h2>Daftar Akun</h2>
     <p>Buat akun baru untuk mengakses Perpustakaan</p>
 
-    <form action="login.php" method="post">
-      <input type="text" placeholder="Nama Lengkap" required>
-      <input type="email" placeholder="Email" required>
-      <input type="text" placeholder="Username" required>
-      <input type="password" placeholder="Password" required>
-      <input type="password" placeholder="Konfirmasi Password" required>
-      <button type="submit">Daftar</button>
+    <form action="registrasi_aksi.php" method="post" class="register-form-grid">
+      <input type="text" name="NAMA_USER" placeholder="Nama Lengkap" required>
+      <input type="text" name="USERNAME" placeholder="Username" required>
+      <input type="text" name="ALAMAT" placeholder="Alamat" class="register-full-row" required>
+      <select name="GENDER" required>
+        <option value="">Pilih Gender</option>
+        <option value="PRIA">PRIA</option>
+        <option value="WANITA">WANITA</option>
+      </select>
+      <input type="text" name="HP" placeholder="No. HP" required>
+      <input type="password" name="PASSWORD" placeholder="Password" required>
+      <input type="password" name="KONFIRMASI_PASSWORD" placeholder="Konfirmasi Password" required>
+      <button type="submit" class="register-full-row">Daftar</button>
     </form>
 
     <div class="footer">
-      <p>Sudah punya akun? <a href="Login.php">Kembali login</a></p>
+      <p>Sudah punya akun? <a href="login.php">Kembali login</a></p>
     </div>
   </div>
 </body>

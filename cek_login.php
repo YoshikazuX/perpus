@@ -15,13 +15,12 @@ if (mysqli_num_rows($result) == 1) {
 
 
     $_SESSION['ID_USER'] = $user['ID_USER'];
+    $_SESSION['NAMA_USER'] = $user['NAMA_USER'];
     $_SESSION['USERNAME'] = $user['USERNAME'];
     $_SESSION['LEVEL'] = $user['LEVEL'];
 
-    if ($user['LEVEL'] == 'admin') {
+    if ($user['LEVEL'] == 'Admin') {
         header("Location: dashboard.php");
-    } elseif ($user['LEVEL'] == 'petugas') {
-        header("Location: dashboard_petugas.php");
     } else {
         header("Location: dashboard_peminjam.php");
     }

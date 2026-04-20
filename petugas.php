@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['ID_USER'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -6,8 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <title>Data Peminjam - PerpustakaanKu</title>
-
+    <title>Data Petugas - PerpustakaanKu</title>
 </head>
 
 <body>
@@ -17,7 +25,7 @@
             <li><a href="Dashboard.php">Dashboard</a></li>
             <li><a href="Buku.php">Buku</a></li>
             <li><a href="Peminjam.php">Peminjam</a></li>
-            <li><a href="Petugas.php">Petugas</a></li>
+            <li><a href="Petugas.php" class="active">Petugas</a></li>
             <li><a href="Peminjaman.php">Peminjaman</a></li>
             <li><a href="Login.php">Logout</a></li>
         </ul>
@@ -34,6 +42,9 @@
 
         <div class="content">
             <h2>Daftar Petugas</h2>
+            <div class="tombol-tambah">
+                <a href="petugas_tambah.php" class="btn-tambah">+ Tambah Data</a>
+            </div>
             <table border="0" cellspacing="0" cellpadding="8">
                 <tr>
                     <th>ID PETUGAS</th>
@@ -41,6 +52,7 @@
                     <th>GENDER</th>
                     <th>ALAMAT</th>
                     <th>HP</th>
+                    <th>AKSI</th>
                 </tr>
 
                 <?php
@@ -49,11 +61,15 @@
                 while ($tampil = mysqli_fetch_array($data)) {
                 ?>
                     <tr>
-                        <td><?php echo $tampil['ID_PETUGAS']; ?></td>
-                        <td><?php echo $tampil['NAMA']; ?></td>
-                        <td><?php echo $tampil['GENDER']; ?></td>
-                        <td><?php echo $tampil['ALAMAT']; ?></td>
-                        <td><?php echo $tampil['HP']; ?></td>
+                        <td><?php echo htmlspecialchars($tampil['ID_PETUGAS'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo htmlspecialchars($tampil['NAMA'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo htmlspecialchars($tampil['GENDER'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo htmlspecialchars($tampil['ALAMAT'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo htmlspecialchars($tampil['HP'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td class="action-cell">
+                            <a href="petugas_edit.php?ID_PETUGAS=<?php echo urlencode($tampil['ID_PETUGAS']); ?>" class="btn-action edit">Edit</a>
+                            <a href="petugas_hapus.php?ID_PETUGAS=<?php echo urlencode($tampil['ID_PETUGAS']); ?>" class="btn-action delete">Hapus</a>
+                        </td>
                     </tr>
                 <?php
                 }

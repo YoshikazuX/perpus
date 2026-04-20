@@ -13,8 +13,8 @@ $gender = mysqli_real_escape_string($koneksi, trim($_POST['GENDER']));
 $alamat = mysqli_real_escape_string($koneksi, trim($_POST['ALAMAT']));
 $hp = mysqli_real_escape_string($koneksi, trim($_POST['HP']));
 
-mysqli_query($koneksi, "INSERT INTO petugas VALUES ('$idPetugas', '$nama', '$gender', '$alamat', '$hp')");
+mysqli_query($koneksi, "UPDATE petugas SET NAMA='$nama', GENDER='$gender', ALAMAT='$alamat', HP='$hp' WHERE ID_PETUGAS='$idPetugas'");
 
-header("Location: petugas.php?pesan=input");
+header("Location: petugas.php?pesan=update");
 exit;
 ?>
