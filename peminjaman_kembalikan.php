@@ -8,12 +8,14 @@ if (!isset($_SESSION['ID_USER'])) {
     exit;
 }
 
+$peminjamanListPage = ($_SESSION['LEVEL'] ?? '') === 'Petugas' ? 'peminjaman_petugas.php' : 'peminjaman.php';
+
 $idPeminjaman = mysqli_real_escape_string($koneksi, $_GET['ID_PEMINJAMAN']);
 $data = mysqli_query($koneksi, "SELECT * FROM peminjaman WHERE ID_PEMINJAMAN='$idPeminjaman' LIMIT 1");
 $tampil = $data ? mysqli_fetch_assoc($data) : null;
 
 if (!$tampil) {
-    header("Location: peminjaman.php");
+    header("Location: $peminjamanListPage");
     exit;
 }
 
@@ -41,11 +43,11 @@ if ($tampil['STATUS'] === 'Dipinjam') {
         mysqli_commit($koneksi);
     } catch (Throwable $e) {
         mysqli_rollback($koneksi);
-        echo "<script>alert('" . addslashes($e->getMessage()) . "'); window.location='peminjaman.php';</script>";
+        echo "<script>alert('" . addslashes($e->getMessage()) . "'); window.location='$peminjamanListPage';</script>";
         exit;
     }
 }
 
-header("Location: peminjaman.php?pesan=dikembalikan");
+header("Location: $peminjamanListPage?pesan=dikembalikan");
 exit;
 ?>

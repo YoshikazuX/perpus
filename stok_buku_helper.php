@@ -27,10 +27,15 @@ function kurangiStokBuku(mysqli $koneksi, string $isbn, int $jumlah, ?string &$p
     }
 
     $isbnEscaped = mysqli_real_escape_string($koneksi, $isbn);
-    $query = mysqli_query($koneksi, "UPDATE buku SET STOK = STOK - $jumlah WHERE ISBN='$isbnEscaped'");
+    $query = mysqli_query($koneksi, "UPDATE buku SET STOK = STOK - $jumlah WHERE ISBN='$isbnEscaped' AND STOK >= $jumlah");
 
     if (!$query) {
         $pesan = mysqli_error($koneksi);
+        return false;
+    }
+
+    if (mysqli_affected_rows($koneksi) < 1) {
+        $pesan = 'Stok buku "' . $buku['JUDUL_BUKU'] . '" tidak mencukupi.';
         return false;
     }
 

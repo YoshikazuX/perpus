@@ -1,5 +1,6 @@
 <?php
 include 'koneksi.php';
+include 'id_generator_helper.php';
 
 $namaUser = mysqli_real_escape_string($koneksi, trim($_POST['NAMA_USER']));
 $alamat = mysqli_real_escape_string($koneksi, trim($_POST['ALAMAT']));
@@ -21,21 +22,8 @@ if ($cekUsername && mysqli_num_rows($cekUsername) > 0) {
     exit;
 }
 
-$idUser = 'USR001';
-$userTerakhir = mysqli_query($koneksi, "SELECT ID_USER FROM user ORDER BY ID_USER DESC LIMIT 1");
-if ($userTerakhir && mysqli_num_rows($userTerakhir) > 0) {
-    $rowUser = mysqli_fetch_assoc($userTerakhir);
-    $angkaUser = (int) preg_replace('/\D/', '', $rowUser['ID_USER']);
-    $idUser = 'USR' . str_pad((string) ($angkaUser + 1), 3, '0', STR_PAD_LEFT);
-}
-
-$idPeminjam = 'PMJ001';
-$peminjamTerakhir = mysqli_query($koneksi, "SELECT ID_PEMINJAM FROM peminjam ORDER BY ID_PEMINJAM DESC LIMIT 1");
-if ($peminjamTerakhir && mysqli_num_rows($peminjamTerakhir) > 0) {
-    $rowPeminjam = mysqli_fetch_assoc($peminjamTerakhir);
-    $angkaPeminjam = (int) preg_replace('/\D/', '', $rowPeminjam['ID_PEMINJAM']);
-    $idPeminjam = 'PMJ' . str_pad((string) ($angkaPeminjam + 1), 3, '0', STR_PAD_LEFT);
-}
+$idUser = generateNumericId($koneksi, 'user', 'ID_USER');
+$idPeminjam = generateId($koneksi, 'peminjam', 'ID_PEMINJAM', 'PMJ');
 
 mysqli_begin_transaction($koneksi);
 

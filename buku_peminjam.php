@@ -12,20 +12,23 @@ if ($_SESSION['LEVEL'] === 'Admin') {
 }
 
 include 'koneksi.php';
+require_once "pagination_helper.php";
+require_once "search_helper.php";
 
-$namaUser = htmlspecialchars($_SESSION['NAMA_USER'] ?? $_SESSION['USERNAME'], ENT_QUOTES, 'UTF-8');
 $keyword = trim($_GET['keyword'] ?? '');
 $keywordEscaped = mysqli_real_escape_string($koneksi, $keyword);
-$query = "SELECT * FROM buku";
+$whereClause = "";
 
 if ($keyword !== '') {
-    $query .= " WHERE ISBN LIKE '%$keywordEscaped%'
+    $whereClause = " WHERE ISBN LIKE '%$keywordEscaped%'
         OR JUDUL_BUKU LIKE '%$keywordEscaped%'
         OR PENGARANG LIKE '%$keywordEscaped%'
-        OR PENERBIT LIKE '%$keywordEscaped%'";
+        OR PENERBIT LIKE '%$keywordEscaped%'
+        OR GENRE LIKE '%$keywordEscaped%'";
 }
 
-$query .= " ORDER BY JUDUL_BUKU ASC";
+$pagination = getPaginationData($koneksi, "SELECT COUNT(*) AS total FROM buku$whereClause");
+$query = "SELECT * FROM buku$whereClause ORDER BY ISBN DESC LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}";
 $data = mysqli_query($koneksi, $query);
 ?>
 
@@ -54,29 +57,18 @@ $data = mysqli_query($koneksi, $query);
   <div class="main">
     <header>
       <h1>Katalog Buku</h1>
-      <div class="user-info">
-        <span><?php echo $namaUser; ?></span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">
       <h2>Daftar Buku Perpustakaan</h2>
-      <div class="toolbar-row">
-        <form method="get" class="search-form">
-          <input type="text" name="keyword" class="search-input" placeholder="Cari judul, ISBN, pengarang..." value="<?php echo htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8'); ?>">
-          <button type="submit" class="btn-search">Cari</button>
-          <?php if ($keyword !== '') { ?>
-            <a href="buku_peminjam.php" class="btn-reset">Reset</a>
-          <?php } ?>
-        </form>
-      </div>
+      <?php renderSearchForm('Cari data buku...'); ?>
       <table border="0" cellspacing="0" cellpadding="8">
         <tr>
           <th>ISBN</th>
           <th>JUDUL BUKU</th>
           <th>PENGARANG</th>
           <th>PENERBIT</th>
+          <th>GENRE</th>
           <th>TAHUN TERBIT</th>
           <th>STOK</th>
         </tr>
@@ -87,16 +79,18 @@ $data = mysqli_query($koneksi, $query);
               <td><?php echo htmlspecialchars($row['JUDUL_BUKU'], ENT_QUOTES, 'UTF-8'); ?></td>
               <td><?php echo htmlspecialchars($row['PENGARANG'], ENT_QUOTES, 'UTF-8'); ?></td>
               <td><?php echo htmlspecialchars($row['PENERBIT'], ENT_QUOTES, 'UTF-8'); ?></td>
+              <td><?php echo htmlspecialchars($row['GENRE'], ENT_QUOTES, 'UTF-8'); ?></td>
               <td><?php echo htmlspecialchars($row['TAHUN_TERBIT'], ENT_QUOTES, 'UTF-8'); ?></td>
               <td><?php echo htmlspecialchars($row['STOK'], ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
           <?php } ?>
         <?php } else { ?>
           <tr>
-            <td colspan="6">Buku yang dicari tidak ditemukan.</td>
+            <td colspan="7">Buku yang dicari tidak ditemukan.</td>
           </tr>
         <?php } ?>
       </table>
+      <?php renderPagination($pagination); ?>
     </div>
   </div>
 </body>

@@ -5,6 +5,25 @@ if (!isset($_SESSION['ID_USER'])) {
     header("Location: login.php");
     exit;
 }
+
+include "koneksi.php";
+require_once "pagination_helper.php";
+require_once "search_helper.php";
+
+$keyword = trim($_GET['keyword'] ?? '');
+$keywordEscaped = mysqli_real_escape_string($koneksi, $keyword);
+$whereClause = "";
+
+if ($keyword !== '') {
+    $whereClause = " WHERE ID_PEMINJAM LIKE '%$keywordEscaped%'
+        OR NAMA LIKE '%$keywordEscaped%'
+        OR ALAMAT LIKE '%$keywordEscaped%'
+        OR GENDER LIKE '%$keywordEscaped%'
+        OR HP LIKE '%$keywordEscaped%'";
+}
+
+$pagination = getPaginationData($koneksi, "SELECT COUNT(*) AS total FROM peminjam$whereClause");
+$data = mysqli_query($koneksi, "SELECT * FROM peminjam$whereClause ORDER BY ID_PEMINJAM DESC LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}");
 ?>
 
 <!DOCTYPE html>
@@ -27,6 +46,7 @@ if (!isset($_SESSION['ID_USER'])) {
       <li><a href="Peminjam.php" class="active">Peminjam</a></li>
       <li><a href="Petugas.php">Petugas</a></li>
       <li><a href="Peminjaman.php">Peminjaman</a></li>
+      <li><a href="user.php">User</a></li>
       <li><a href="Login.php">Logout</a></li>
     </ul>
   </div>
@@ -34,15 +54,12 @@ if (!isset($_SESSION['ID_USER'])) {
   <div class="main">
     <header>
       <h1>Data Peminjam</h1>
-      <div class="user-info">
-        <span>Admin</span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">
       <h2>Daftar Peminjam</h2>
       <div class="tombol-tambah">
+        <?php renderSearchForm('Cari data peminjam...'); ?>
         <a href="peminjam_tambah.php" class="btn-tambah">+ Tambah Data</a>
       </div>
       <table border="0" cellspacing="0" cellpadding="8">
@@ -56,9 +73,8 @@ if (!isset($_SESSION['ID_USER'])) {
         </tr>
 
         <?php
-        include "koneksi.php";
-        $data = mysqli_query($koneksi, "SELECT * FROM peminjam");
-        while ($tampil = mysqli_fetch_array($data)) {
+        if (mysqli_num_rows($data) > 0) {
+          while ($tampil = mysqli_fetch_array($data)) {
         ?>
           <tr>
             <td><?php echo htmlspecialchars($tampil['ID_PEMINJAM'], ENT_QUOTES, 'UTF-8'); ?></td>
@@ -72,9 +88,17 @@ if (!isset($_SESSION['ID_USER'])) {
             </td>
           </tr>
         <?php
+          }
+        } else {
+        ?>
+          <tr>
+            <td colspan="6">Belum ada data peminjam.</td>
+          </tr>
+        <?php
         }
         ?>
       </table>
+      <?php renderPagination($pagination); ?>
     </div>
   </div>
 </body>

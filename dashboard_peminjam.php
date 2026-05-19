@@ -12,8 +12,9 @@ if ($_SESSION['LEVEL'] === 'Admin') {
 }
 
 include 'koneksi.php';
+require_once "pagination_helper.php";
+require_once "search_helper.php";
 
-$namaUser = htmlspecialchars($_SESSION['NAMA_USER'] ?? $_SESSION['USERNAME'], ENT_QUOTES, 'UTF-8');
 $namaFilter = mysqli_real_escape_string($koneksi, $_SESSION['NAMA_USER'] ?? '');
 $usernameFilter = mysqli_real_escape_string($koneksi, $_SESSION['USERNAME'] ?? '');
 
@@ -30,7 +31,19 @@ $riwayatResult = mysqli_query($koneksi, "
 ");
 $riwayatStat = mysqli_fetch_assoc($riwayatResult);
 
-$terbaru = mysqli_query($koneksi, "SELECT JUDUL_BUKU, PENGARANG, STOK FROM buku ORDER BY ISBN DESC LIMIT 4");
+$keyword = trim($_GET['keyword'] ?? '');
+$keywordEscaped = mysqli_real_escape_string($koneksi, $keyword);
+$whereBuku = "";
+
+if ($keyword !== '') {
+    $whereBuku = " WHERE JUDUL_BUKU LIKE '%$keywordEscaped%'
+      OR PENGARANG LIKE '%$keywordEscaped%'
+      OR GENRE LIKE '%$keywordEscaped%'
+      OR STOK LIKE '%$keywordEscaped%'";
+}
+
+$pagination = getPaginationData($koneksi, "SELECT COUNT(*) AS total FROM buku$whereBuku");
+$terbaru = mysqli_query($koneksi, "SELECT JUDUL_BUKU, PENGARANG, GENRE, STOK FROM buku$whereBuku ORDER BY ISBN DESC LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}");
 ?>
 
 <!DOCTYPE html>
@@ -58,10 +71,6 @@ $terbaru = mysqli_query($koneksi, "SELECT JUDUL_BUKU, PENGARANG, STOK FROM buku 
   <div class="main">
     <header>
       <h1>Dashboard Peminjam</h1>
-      <div class="user-info">
-        <span><?php echo $namaUser; ?></span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">
@@ -85,20 +94,30 @@ $terbaru = mysqli_query($koneksi, "SELECT JUDUL_BUKU, PENGARANG, STOK FROM buku 
       </div>
 
       <h2>Koleksi Terbaru</h2>
+      <?php renderSearchForm('Cari koleksi buku...'); ?>
       <table border="0" cellspacing="0" cellpadding="8">
         <tr>
           <th>JUDUL BUKU</th>
           <th>PENGARANG</th>
+          <th>GENRE</th>
           <th>STOK</th>
         </tr>
-        <?php while ($row = mysqli_fetch_assoc($terbaru)) { ?>
+        <?php if (mysqli_num_rows($terbaru) > 0) { ?>
+          <?php while ($row = mysqli_fetch_assoc($terbaru)) { ?>
           <tr>
             <td><?php echo htmlspecialchars($row['JUDUL_BUKU'], ENT_QUOTES, 'UTF-8'); ?></td>
             <td><?php echo htmlspecialchars($row['PENGARANG'], ENT_QUOTES, 'UTF-8'); ?></td>
+            <td><?php echo htmlspecialchars($row['GENRE'], ENT_QUOTES, 'UTF-8'); ?></td>
             <td><?php echo htmlspecialchars($row['STOK'], ENT_QUOTES, 'UTF-8'); ?></td>
+          </tr>
+          <?php } ?>
+        <?php } else { ?>
+          <tr>
+            <td colspan="4">Koleksi buku yang dicari tidak ditemukan.</td>
           </tr>
         <?php } ?>
       </table>
+      <?php renderPagination($pagination); ?>
     </div>
   </div>
 </body>

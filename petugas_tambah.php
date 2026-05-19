@@ -27,6 +27,7 @@ if (!isset($_SESSION['ID_USER'])) {
       <li><a href="Peminjam.php">Peminjam</a></li>
       <li><a href="Petugas.php" class="active">Petugas</a></li>
       <li><a href="Peminjaman.php">Peminjaman</a></li>
+      <li><a href="user.php">User</a></li>
       <li><a href="Login.php">Logout</a></li>
     </ul>
   </div>
@@ -34,10 +35,6 @@ if (!isset($_SESSION['ID_USER'])) {
   <div class="main">
     <header>
       <h1>Tambah Petugas</h1>
-      <div class="user-info">
-        <span>Admin</span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">
@@ -48,11 +45,6 @@ if (!isset($_SESSION['ID_USER'])) {
         </div>
 
         <form method="post" action="petugas_tambah_aksi.php">
-          <div class="form-group">
-            <label for="id_petugas">ID Petugas</label>
-            <input type="text" id="id_petugas" name="ID_PETUGAS" maxlength="20" required>
-          </div>
-
           <div class="form-group">
             <label for="nama">Nama</label>
             <input type="text" id="nama" name="NAMA" maxlength="50" required>

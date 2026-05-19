@@ -2,6 +2,7 @@
 session_start();
 include 'koneksi.php';
 include 'stok_buku_helper.php';
+include 'petugas_operator_helper.php';
 
 if (!isset($_SESSION['ID_USER'])) {
     header("Location: login.php");
@@ -11,26 +12,16 @@ if (!isset($_SESSION['ID_USER'])) {
 $idPeminjaman = mysqli_real_escape_string($koneksi, trim($_POST['id_peminjaman']));
 $isbn = mysqli_real_escape_string($koneksi, trim($_POST['isbn']));
 $idPeminjam = mysqli_real_escape_string($koneksi, trim($_POST['id_peminjam']));
-$idPetugas = mysqli_real_escape_string($koneksi, trim($_POST['id_petugas']));
-$jumlah = (int) $_POST['jumlah'];
-$tglMulai = mysqli_real_escape_string($koneksi, trim($_POST['tgl_mulai']));
-$tglSelesai = trim($_POST['tgl_selesai']);
-$status = $tglSelesai === '' ? 'Dipinjam' : 'Dikembalikan';
-
-if ($jumlah < 1) {
-    $jumlah = 1;
-}
-
-if ($tglSelesai !== '' && $tglSelesai < $tglMulai) {
-    echo "<script>alert('Tanggal kembali tidak boleh lebih awal dari tanggal peminjaman.'); window.location='form_peminjaman.php';</script>";
-    exit;
-}
-
-$tglSelesaiValue = $tglSelesai === '' ? "NULL" : "'" . mysqli_real_escape_string($koneksi, $tglSelesai) . "'";
+$jumlah = 1;
+$tglMulai = date('Y-m-d');
+$tglSelesaiValue = "NULL";
+$status = 'Dipinjam';
 
 mysqli_begin_transaction($koneksi);
 
 try {
+    $idPetugas = mysqli_real_escape_string($koneksi, getPetugasPeminjamanValue($koneksi));
+
     if ($status === 'Dipinjam' && !kurangiStokBuku($koneksi, $isbn, $jumlah, $pesanStok)) {
         throw new Exception($pesanStok);
     }

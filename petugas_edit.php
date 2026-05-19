@@ -38,6 +38,7 @@ if (!$tampil) {
       <li><a href="Peminjam.php">Peminjam</a></li>
       <li><a href="Petugas.php" class="active">Petugas</a></li>
       <li><a href="Peminjaman.php">Peminjaman</a></li>
+      <li><a href="user.php">User</a></li>
       <li><a href="Login.php">Logout</a></li>
     </ul>
   </div>
@@ -45,10 +46,6 @@ if (!$tampil) {
   <div class="main">
     <header>
       <h1>Edit Petugas</h1>
-      <div class="user-info">
-        <span>Admin</span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">

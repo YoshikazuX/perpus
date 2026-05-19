@@ -27,6 +27,7 @@ if (!isset($_SESSION['ID_USER'])) {
       <li><a href="Peminjam.php">Peminjam</a></li>
       <li><a href="Petugas.php">Petugas</a></li>
       <li><a href="Peminjaman.php">Peminjaman</a></li>
+      <li><a href="user.php">User</a></li>
       <li><a href="Login.php">Logout</a></li>
     </ul>
   </div>
@@ -34,10 +35,6 @@ if (!isset($_SESSION['ID_USER'])) {
   <div class="main">
     <header>
       <h1>Selamat Datang di Dashboard</h1>
-      <div class="user-info">
-        <span>Admin</span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">

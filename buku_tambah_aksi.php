@@ -11,10 +11,17 @@ $ISBN = $_POST['ISBN'];
 $JUDUL = $_POST['JUDUL_BUKU'];
 $PENGARANG = $_POST['PENGARANG'];
 $PENERBIT = $_POST['PENERBIT'];
-$TAHUN_TERBIT = $_POST['TAHUN_TERBIT'];
+$GENRE = $_POST['GENRE'];
+$TAHUN_TERBIT = (int) $_POST['TAHUN_TERBIT'];
 $STOK = max(0, (int) $_POST['STOK']);
+$tahunSekarang = (int) date('Y');
 
-mysqli_query($koneksi, "INSERT INTO buku VALUES ('$ISBN','$JUDUL','$PENGARANG','$PENERBIT','$TAHUN_TERBIT','$STOK')");
+if ($TAHUN_TERBIT > $tahunSekarang) {
+    echo "<script>alert('Tahun terbit tidak boleh melebihi tahun sekarang.'); window.location='buku_tambah.php';</script>";
+    exit;
+}
+
+mysqli_query($koneksi, "INSERT INTO buku (ISBN, JUDUL_BUKU, PENGARANG, PENERBIT, GENRE, TAHUN_TERBIT, STOK) VALUES ('$ISBN','$JUDUL','$PENGARANG','$PENERBIT','$GENRE','$TAHUN_TERBIT','$STOK')");
 header("location:buku.php?pesan=input");
 
 ?>

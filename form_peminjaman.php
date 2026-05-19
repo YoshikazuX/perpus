@@ -8,9 +8,8 @@ if (!isset($_SESSION['ID_USER'])) {
 
 include 'koneksi.php';
 
-$buku = mysqli_query($koneksi, "SELECT ISBN, JUDUL_BUKU FROM buku");
+$buku = mysqli_query($koneksi, "SELECT ISBN, JUDUL_BUKU, STOK FROM buku ORDER BY JUDUL_BUKU ASC");
 $peminjam = mysqli_query($koneksi, "SELECT ID_PEMINJAM, NAMA FROM peminjam");
-$petugas = mysqli_query($koneksi, "SELECT ID_PETUGAS, NAMA FROM petugas");
 
 $idBaru = 'PMJM001';
 $dataId = mysqli_query($koneksi, "SELECT ID_PEMINJAMAN FROM peminjaman ORDER BY ID_PEMINJAMAN DESC LIMIT 1");
@@ -42,6 +41,7 @@ if ($dataId && mysqli_num_rows($dataId) > 0) {
       <li><a href="Peminjam.php">Peminjam</a></li>
       <li><a href="Petugas.php">Petugas</a></li>
       <li><a href="Peminjaman.php" class="active">Peminjaman</a></li>
+      <li><a href="user.php">User</a></li>
       <li><a href="Login.php">Logout</a></li>
     </ul>
   </div>
@@ -49,10 +49,6 @@ if ($dataId && mysqli_num_rows($dataId) > 0) {
   <div class="main">
     <header>
       <h1>Tambah Peminjaman</h1>
-      <div class="user-info">
-        <span>Admin</span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">
@@ -63,57 +59,28 @@ if ($dataId && mysqli_num_rows($dataId) > 0) {
         </div>
 
         <form action="simpan_peminjaman.php" method="POST" class="loan-form-grid">
-          <div class="form-group">
-            <label for="id_peminjaman">ID Peminjaman</label>
-            <input type="text" id="id_peminjaman" name="id_peminjaman" value="<?= htmlspecialchars($idBaru, ENT_QUOTES, 'UTF-8'); ?>" readonly>
-          </div>
-
-          <div class="form-group">
-            <label for="jumlah">Jumlah</label>
-            <input type="number" id="jumlah" name="jumlah" min="1" value="1" required>
-          </div>
+          <input type="hidden" name="id_peminjaman" value="<?= htmlspecialchars($idBaru, ENT_QUOTES, 'UTF-8'); ?>">
 
           <div class="form-group full-row">
             <label for="isbn">Judul Buku</label>
             <select id="isbn" name="isbn" required>
               <option value="">-- Pilih Buku --</option>
               <?php while ($b = mysqli_fetch_assoc($buku)) : ?>
-                <option value="<?= htmlspecialchars($b['ISBN'], ENT_QUOTES, 'UTF-8'); ?>">
-                  <?= htmlspecialchars($b['JUDUL_BUKU'], ENT_QUOTES, 'UTF-8'); ?>
+                <?php $stok = (int) $b['STOK']; ?>
+                <option value="<?= htmlspecialchars($b['ISBN'], ENT_QUOTES, 'UTF-8'); ?>" data-stock="<?= $stok; ?>" <?= $stok < 1 ? 'disabled' : ''; ?>>
+                  <?= htmlspecialchars($b['JUDUL_BUKU'], ENT_QUOTES, 'UTF-8'); ?> (Stok: <?= $stok; ?>)
                 </option>
               <?php endwhile; ?>
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="tgl_mulai">Tanggal Peminjaman</label>
-            <input type="date" id="tgl_mulai" name="tgl_mulai" required>
-          </div>
-
-          <div class="form-group">
-            <label for="tgl_selesai">Tanggal Kembali</label>
-            <input type="date" id="tgl_selesai" name="tgl_selesai">
-          </div>
-
-          <div class="form-group">
+          <div class="form-group full-row">
             <label for="id_peminjam">Nama Peminjam</label>
             <select id="id_peminjam" name="id_peminjam" required>
               <option value="">-- Pilih Peminjam --</option>
               <?php while ($p = mysqli_fetch_assoc($peminjam)) : ?>
                 <option value="<?= htmlspecialchars($p['ID_PEMINJAM'], ENT_QUOTES, 'UTF-8'); ?>">
                   <?= htmlspecialchars($p['NAMA'], ENT_QUOTES, 'UTF-8'); ?>
-                </option>
-              <?php endwhile; ?>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="id_petugas">Petugas</label>
-            <select id="id_petugas" name="id_petugas" required>
-              <option value="">-- Pilih Petugas --</option>
-              <?php while ($pt = mysqli_fetch_assoc($petugas)) : ?>
-                <option value="<?= htmlspecialchars($pt['ID_PETUGAS'], ENT_QUOTES, 'UTF-8'); ?>">
-                  <?= htmlspecialchars($pt['NAMA'], ENT_QUOTES, 'UTF-8'); ?>
                 </option>
               <?php endwhile; ?>
             </select>

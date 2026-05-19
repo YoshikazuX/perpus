@@ -21,6 +21,8 @@ if (mysqli_num_rows($result) == 1) {
 
     if ($user['LEVEL'] == 'Admin') {
         header("Location: dashboard.php");
+    } elseif ($user['LEVEL'] == 'Petugas') {
+        header("Location: dashboard_petugas.php");
     } else {
         header("Location: dashboard_peminjam.php");
     }

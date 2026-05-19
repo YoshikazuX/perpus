@@ -12,11 +12,35 @@ if ($_SESSION['LEVEL'] === 'Admin') {
 }
 
 include 'koneksi.php';
+require_once "pagination_helper.php";
+require_once "search_helper.php";
 
-$namaUser = htmlspecialchars($_SESSION['NAMA_USER'] ?? $_SESSION['USERNAME'], ENT_QUOTES, 'UTF-8');
 $namaFilter = mysqli_real_escape_string($koneksi, $_SESSION['NAMA_USER'] ?? '');
 $usernameFilter = mysqli_real_escape_string($koneksi, $_SESSION['USERNAME'] ?? '');
+$whereRiwayat = "(peminjam.NAMA = '$namaFilter' OR peminjam.NAMA = '$usernameFilter')";
+$keyword = trim($_GET['keyword'] ?? '');
+$keywordEscaped = mysqli_real_escape_string($koneksi, $keyword);
+$keywordClause = "";
 
+if ($keyword !== '') {
+    $keywordClause = " AND (
+        peminjaman.ID_PEMINJAMAN LIKE '%$keywordEscaped%'
+        OR buku.JUDUL_BUKU LIKE '%$keywordEscaped%'
+        OR peminjam.NAMA LIKE '%$keywordEscaped%'
+        OR peminjaman.TANGGAL_MULAI LIKE '%$keywordEscaped%'
+        OR peminjaman.TANGGAL_SELESAI LIKE '%$keywordEscaped%'
+        OR peminjaman.STATUS LIKE '%$keywordEscaped%'
+    )";
+}
+
+$pagination = getPaginationData($koneksi, "
+  SELECT COUNT(*) AS total
+  FROM peminjaman
+  JOIN buku ON peminjaman.ISBN = buku.ISBN
+  JOIN peminjam ON peminjaman.ID_PEMINJAM = peminjam.ID_PEMINJAM
+  WHERE $whereRiwayat
+  $keywordClause
+");
 $data = mysqli_query($koneksi, "
   SELECT 
     peminjaman.ID_PEMINJAMAN,
@@ -28,8 +52,10 @@ $data = mysqli_query($koneksi, "
   FROM peminjaman
   JOIN buku ON peminjaman.ISBN = buku.ISBN
   JOIN peminjam ON peminjaman.ID_PEMINJAM = peminjam.ID_PEMINJAM
-  WHERE peminjam.NAMA = '$namaFilter' OR peminjam.NAMA = '$usernameFilter'
-  ORDER BY peminjaman.TANGGAL_MULAI DESC
+  WHERE $whereRiwayat
+  $keywordClause
+  ORDER BY peminjaman.TANGGAL_MULAI DESC, peminjaman.ID_PEMINJAMAN DESC
+  LIMIT {$pagination['per_page']} OFFSET {$pagination['offset']}
 ");
 ?>
 
@@ -58,14 +84,11 @@ $data = mysqli_query($koneksi, "
   <div class="main">
     <header>
       <h1>Riwayat Peminjaman</h1>
-      <div class="user-info">
-        <span><?php echo $namaUser; ?></span>
-        <img src="https://i.pravatar.cc/100" alt="User">
-      </div>
     </header>
 
     <div class="content">
       <h2>Riwayat Akun Anda</h2>
+      <?php renderSearchForm('Cari riwayat peminjaman...'); ?>
       <table border="0" cellspacing="0" cellpadding="8">
         <tr>
           <th>ID PEMINJAMAN</th>
@@ -92,6 +115,7 @@ $data = mysqli_query($koneksi, "
           </tr>
         <?php } ?>
       </table>
+      <?php renderPagination($pagination); ?>
     </div>
   </div>
 </body>
