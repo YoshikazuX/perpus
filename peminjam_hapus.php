@@ -18,6 +18,10 @@ try {
     if ($peminjam) {
         $namaPeminjam = mysqli_real_escape_string($koneksi, $peminjam['NAMA']);
 
+        if (!mysqli_query($koneksi, "DELETE FROM peminjaman WHERE ID_PEMINJAM='$idPeminjam'")) {
+            throw new Exception(mysqli_error($koneksi));
+        }
+
         if (!mysqli_query($koneksi, "DELETE FROM peminjam WHERE ID_PEMINJAM='$idPeminjam'")) {
             throw new Exception(mysqli_error($koneksi));
         }

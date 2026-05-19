@@ -24,6 +24,13 @@ if (isset($_GET['ID_USER'])) {
             if ($level == 'Petugas') {
                 mysqli_query($koneksi, "DELETE FROM petugas WHERE NAMA='$namaUser'");
             } elseif ($level == 'Peminjam' || $level == 'Anggota') {
+                $qPeminjam = mysqli_query($koneksi, "SELECT ID_PEMINJAM FROM peminjam WHERE NAMA='$namaUser'");
+                if ($qPeminjam) {
+                    while ($rowP = mysqli_fetch_assoc($qPeminjam)) {
+                        $idP = $rowP['ID_PEMINJAM'];
+                        mysqli_query($koneksi, "DELETE FROM peminjaman WHERE ID_PEMINJAM='$idP'");
+                    }
+                }
                 mysqli_query($koneksi, "DELETE FROM peminjam WHERE NAMA='$namaUser'");
             }
         }
